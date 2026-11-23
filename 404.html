@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ups, tego nie ma w karcie – Gorzki Melon</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='32' rx='18' ry='28' fill='%231B3F8B'/%3E%3Cellipse cx='32' cy='32' rx='9' ry='19' fill='%23F5EEE2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&family=Hind:wght@400;500;600&family=Kanit:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    /* Strona 404: rozsypane naklejki z daniami do przeciągania */
+    .oops { position: relative; min-height: 100svh; display: grid; place-items: center; text-align: center; padding: 120px var(--gut); overflow: hidden; }
+    .oops__copy { position: relative; z-index: 1; pointer-events: none; }
+    .oops__copy a { pointer-events: auto; }
+    .oops__code { font: 800 clamp(120px, 26vw, 360px)/.8 var(--f-display); font-variation-settings: var(--wonk); color: var(--blue); letter-spacing: -.04em; margin: 0; }
+    .oops__code em { color: var(--blue-2); }
+    .oops h1 { font-size: clamp(36px, 6vw, 84px); color: var(--ink); margin: 18px 0 14px; }
+    .oops h1 em { color: var(--green); }
+    .oops p { color: var(--ink-2); margin-bottom: 30px; }
+    .drag { position: absolute; z-index: 2; cursor: grab; touch-action: none; user-select: none; background: var(--paper-2); padding: 8px 8px 26px; box-shadow: 0 18px 36px -16px rgba(31, 26, 21, .5); rotate: var(--r); width: clamp(110px, 14vw, 180px); transition: scale .2s; }
+    .drag img { width: 100%; aspect-ratio: 1; object-fit: cover; pointer-events: none; }
+    .drag span { position: absolute; left: 0; right: 0; bottom: 6px; font: 600 12px/1 var(--f-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+    .drag.is-drag { cursor: grabbing; scale: 1.06; z-index: 10; }
+    .drag--oval { width: 130px; height: 84px; padding: 0; border-radius: 50%; display: grid; place-items: center; background: var(--blue); color: var(--paper-2); font: 800 14px/1.05 var(--f-display); font-variation-settings: var(--wonk); text-transform: uppercase; box-shadow: none; }
+  </style>
+</head>
+<body class="no-loader">
+<div class="grain" aria-hidden="true"></div>
+<div class="frame frame--top" aria-hidden="true"></div>
+<div class="frame frame--bottom" aria-hidden="true"></div>
+<div class="curtain" aria-hidden="true"></div>
+
+<main class="oops">
+  <div class="oops__copy">
+    <p class="oops__code">4<em>0</em>4</p>
+    <h1>Ups, tego nie ma <em>w karcie</em></h1>
+    <p>Tej strony nie znaleźliśmy — ale momo, curry i naan czekają tam, gdzie zawsze.</p>
+    <a class="btn btn--blue btn--lg" href="/#karta"><span>Wróć do karty</span></a>
+  </div>
+
+  <figure class="drag" style="--r:-8deg; left:8%; top:14%"><img src="/img/momo-chilli-s.webp" alt="Momo chilli"><span>Momo</span></figure>
+  <figure class="drag" style="--r:6deg; right:9%; top:12%"><img src="/img/padthai-s.webp" alt="Pad thai"><span>Pad thai</span></figure>
+  <figure class="drag" style="--r:4deg; left:12%; bottom:12%"><img src="/img/naan-curry-s.webp" alt="Naan i curry"><span>Garlic naan</span></figure>
+  <figure class="drag" style="--r:-5deg; right:12%; bottom:14%"><img src="/img/curries-s.webp" alt="Curry w miseczkach"><span>Butter chicken</span></figure>
+  <div class="drag drag--oval" style="--r:-6deg; left:42%; top:8%">Ostre<br>jak trzeba</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+<script defer>
+  /* Proste przeciąganie naklejek (pointer events) + kurtyna przy powrocie */
+  addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".drag").forEach((el) => {
+      let sx = 0, sy = 0, ox = 0, oy = 0;
+      el.addEventListener("pointerdown", (e) => {
+        el.setPointerCapture(e.pointerId); el.classList.add("is-drag");
+        sx = e.clientX; sy = e.clientY;
+        const t = new DOMMatrixReadOnly(getComputedStyle(el).transform); ox = t.m41; oy = t.m42;
+      });
+      el.addEventListener("pointermove", (e) => {
+        if (!el.classList.contains("is-drag")) return;
+        el.style.transform = `translate(${ox + e.clientX - sx}px, ${oy + e.clientY - sy}px)`;
+      });
+      const end = () => el.classList.remove("is-drag");
+      el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
+    });
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const c = document.querySelector(".curtain"), a = document.querySelector(".oops a");
+    if (window.gsap && !reduced) {
+      try { if (sessionStorage.getItem("gm-curtain")) { sessionStorage.setItem("gm-curtain", ""); gsap.fromTo(c, { yPercent: 0, y: 0 }, { yPercent: -100, duration: .8, ease: "expo.inOut" }); } } catch (e) {}
+      gsap.from(".drag", { scale: 0, duration: .6, ease: "back.out(2)", stagger: .08 });
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        try { sessionStorage.setItem("gm-curtain", "1"); } catch (err) {}
+        gsap.fromTo(c, { yPercent: 100, y: 0 }, { yPercent: 0, duration: .8, ease: "expo.inOut", onComplete: () => { location.href = a.href; } });
+      });
+    }
+  });
+</script>
+</body>
+</html>

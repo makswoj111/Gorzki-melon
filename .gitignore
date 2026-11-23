@@ -1,0 +1,21 @@
+# Kopie zapasowe starszych wersji strony (zostają tylko lokalnie)
+_poprzednia-wersja/
+_wersja-2/
+_wersja-innej-sesji/
+
+# Zależności i pliki narzędzi
+node_modules/
+npm-debug.log*
+*.log
+
+# Pliki systemowe i edytorów
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Archiwa i dane prywatne
+*.zip
+.env
+.env.*
